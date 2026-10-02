@@ -68,52 +68,9 @@ app.post("/api/v1/signin" ,async (req , res)=>{
 // separate "list my avatars" route below. Body: { "name": string, "image": "<public image URL>" }
 app.post("/api/v1/avatar" ,async (req , res)=>{
     // req.body is an object, not a function (was req.body())
-    const {success , data} = CreateAvatarSchema.safeParse(req.body);
+    const { success , data } = CreateAvatarSchema.safeParse(req.body);
     if(!success){
-        return res.status(400).json({message : "invalid input"});
-    }
-
-    try {
-        const response = await axios.get(data.image , {
-            responseType : 'arraybuffer',
-            // Some image hosts (e.g. Wikimedia) return 403 to requests without a User-Agent
-            headers : { "User-Agent" : "higgs-backend/1.0" },
-        });
-        const base64Image = Buffer.from(response.data).toString('base64');
-
-        const interaction = await ai.interactions.create({
-            model: "gemini-3.1-flash-image",
-            // Content blocks take string literals ("text" / "image"), not the String / Image classes
-            input: [
-                { type : "text" , text : "Create a left side profile for this user . Given the image , create a portfolio headshot from the left side of this" },
-                {
-                    type : "image",
-                    // Use the real type of the downloaded image instead of assuming PNG
-                    mime_type: String(response.headers["content-type"] ?? "image/png"),
-                    data: base64Image
-                },
-            ],
-        });
-
-        const generatedImage = interaction.output_image;
-        if (!generatedImage?.data) {
-            return res.status(502).json({message : "no image generated"});
-        }
-
-        // Unique name per request, so avatars don't overwrite each other.
-        // Bun.write creates the assets/ folder if it doesn't exist yet.
-        const fileName = `${crypto.randomUUID()}.png`;
-        await Bun.write(`assets/${fileName}`, Buffer.from(generatedImage.data, "base64"));
-
-        // TODO: save the avatar with db.orm.public.Avatar.create once routes know the signed-in user
-        return res.json({ url: `/assets/${fileName}` });
-    } catch (e) {
-        console.error(e);
-        // Pass the upstream status/message through (e.g. 429 quota from Gemini, 403 from the
-        // image host) so the client sees the real cause instead of a generic 500.
-        const err = e as { status?: number; statusCode?: number; message?: string };
-        const status = err.status ?? err.statusCode ?? 500;
-        return res.status(status).json({message : "avatar generation failed", error : err.message});
+        return res.status(411).json({message : "incorrect details provided from avatars endpoint"})
     }
 })
 
