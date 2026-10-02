@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@prisma/cli-engine": "^0.6.2",
+    "@types/bun": "latest",
+    "prisma": "8.0.0-rc.19"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@prisma/adapter-neon": "^7.10.0",
+    "@prisma/orm-postgres": "8.0.0-rc.13",
+    "@types/express": "^5.0.6",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1"
+  },
+  "scripts": {
+    "postinstall": "prisma skills sync || exit 0",
+    "contract:emit": "prisma contract emit"
+  }
+}

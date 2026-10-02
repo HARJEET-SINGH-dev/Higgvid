@@ -1,0 +1,58 @@
+// use prisma-8
+// Contract inferred from the live database schema. Edit as needed, then run `prisma contract emit`.
+
+model User {
+  id           String        @id(map: "User_pkey")
+  password     String
+  username     String        @unique(map: "User_username_key")
+  avatars      Avatar[]
+  avatarVideos AvatarVideo[]
+}
+
+model Avatar {
+  id                    String                 @id(map: "Avatar_pkey")
+  name                  String
+  userId                String
+  avatarImages          AvatarImage[]
+  avatarVideoReferences AvatarVideoReference[]
+  user                  User                   @relation(fields: [userId], references: [id], map: "Avatar_userId_fkey")
+
+  @@index([userId], name: "Avatar_userId_idx")
+}
+
+model AvatarImage {
+  id       String @id(map: "AvatarImage_pkey")
+  avatarId String
+  _type    String @map("type")
+  url      String
+  avatar   Avatar @relation(fields: [avatarId], references: [id], map: "AvatarImage_avatarId_fkey")
+
+  @@index([avatarId], name: "AvatarImage_avatarId_idx")
+}
+
+model AvatarVideo {
+  id                    String                 @id(map: "AvatarVideo_pkey")
+  duration              Int
+  endFrame              String?
+  height                Int
+  prompt                String
+  startFrame            String?
+  status                String
+  userId                String
+  width                 Int
+  avatarVideoReferences AvatarVideoReference[]
+  user                  User                   @relation(fields: [userId], references: [id], map: "AvatarVideo_userId_fkey")
+
+  @@index([userId], name: "AvatarVideo_userId_idx")
+}
+
+model AvatarVideoReference {
+  id            String      @id(map: "AvatarVideoReference_pkey")
+  avatarId      String
+  avatarVideoId String
+  avatar        Avatar      @relation(fields: [avatarId], references: [id], map: "AvatarVideoReference_avatarId_fkey")
+  avatarVideo   AvatarVideo @relation(fields: [avatarVideoId], references: [id], map: "AvatarVideoReference_avatarVideoId_fkey")
+
+  @@index([avatarId], name: "AvatarVideoReference_avatarId_idx")
+  @@index([avatarVideoId], name: "AvatarVideoReference_avatarVideoId_idx")
+}
