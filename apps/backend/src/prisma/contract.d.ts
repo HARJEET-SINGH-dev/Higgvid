@@ -34,9 +34,8 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'4c9a83ef910fafd8bbc0c5bfb490532ff43b362bafe8135a0d265023f8c67762'>;
-export type ExecutionHash =
-  ExecutionHashBase<'7b11feab6893033b0d390f70b88268da583b0a801067bd2cc63f0961c4d28be8'>;
+  StorageHashBase<'bbaeb2e7d249b48fa5367a2bf1d4320af47406e4972f748f3050e458cddb8447'>;
+export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -256,9 +255,9 @@ export type FieldOutputTypes = {
       readonly userId: CodecTypes['pg/text@1']['output'];
     };
     readonly AvatarImage: {
+      readonly _type: CodecTypes['pg/text@1']['output'];
       readonly avatarId: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
-      readonly type: CodecTypes['pg/text@1']['output'];
       readonly url: CodecTypes['pg/text@1']['output'];
     };
     readonly AvatarVideo: {
@@ -292,9 +291,9 @@ export type FieldInputTypes = {
       readonly userId: CodecTypes['pg/text@1']['input'];
     };
     readonly AvatarImage: {
+      readonly _type: CodecTypes['pg/text@1']['input'];
       readonly avatarId: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
-      readonly type: CodecTypes['pg/text@1']['input'];
       readonly url: CodecTypes['pg/text@1']['input'];
     };
     readonly AvatarVideo: {
@@ -404,9 +403,9 @@ export namespace Models {
     readonly [RelationKeys]?: 'avatarImages' | 'avatarVideoReferences' | 'user';
   };
   export type public_AvatarImage = {
+    _type: CodecTypes['pg/text@1']['output'];
     avatarId: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/text@1']['output'];
-    type: CodecTypes['pg/text@1']['output'];
     url: CodecTypes['pg/text@1']['output'];
     avatar: public_Avatar;
     readonly [RelationKeys]?: 'avatar';
@@ -489,7 +488,7 @@ type ContractBase = Omit<
                   readonly nullable: false;
                 };
               };
-              primaryKey: { readonly columns: readonly ['id'] };
+              primaryKey: { readonly columns: readonly ['id']; readonly name: 'Avatar_pkey' };
               uniques: readonly [];
               indexes: readonly [
                 {
@@ -511,6 +510,7 @@ type ContractBase = Omit<
                     readonly tableName: 'User';
                     readonly columns: readonly ['id'];
                   };
+                  readonly name: 'Avatar_userId_fkey';
                 },
               ];
             };
@@ -537,7 +537,7 @@ type ContractBase = Omit<
                   readonly nullable: false;
                 };
               };
-              primaryKey: { readonly columns: readonly ['id'] };
+              primaryKey: { readonly columns: readonly ['id']; readonly name: 'AvatarImage_pkey' };
               uniques: readonly [];
               indexes: readonly [
                 {
@@ -559,6 +559,7 @@ type ContractBase = Omit<
                     readonly tableName: 'Avatar';
                     readonly columns: readonly ['id'];
                   };
+                  readonly name: 'AvatarImage_avatarId_fkey';
                 },
               ];
             };
@@ -610,7 +611,7 @@ type ContractBase = Omit<
                   readonly nullable: false;
                 };
               };
-              primaryKey: { readonly columns: readonly ['id'] };
+              primaryKey: { readonly columns: readonly ['id']; readonly name: 'AvatarVideo_pkey' };
               uniques: readonly [];
               indexes: readonly [
                 {
@@ -632,6 +633,7 @@ type ContractBase = Omit<
                     readonly tableName: 'User';
                     readonly columns: readonly ['id'];
                   };
+                  readonly name: 'AvatarVideo_userId_fkey';
                 },
               ];
             };
@@ -653,7 +655,10 @@ type ContractBase = Omit<
                   readonly nullable: false;
                 };
               };
-              primaryKey: { readonly columns: readonly ['id'] };
+              primaryKey: {
+                readonly columns: readonly ['id'];
+                readonly name: 'AvatarVideoReference_pkey';
+              };
               uniques: readonly [];
               indexes: readonly [
                 {
@@ -681,6 +686,7 @@ type ContractBase = Omit<
                     readonly tableName: 'Avatar';
                     readonly columns: readonly ['id'];
                   };
+                  readonly name: 'AvatarVideoReference_avatarId_fkey';
                 },
                 {
                   readonly source: {
@@ -693,6 +699,7 @@ type ContractBase = Omit<
                     readonly tableName: 'AvatarVideo';
                     readonly columns: readonly ['id'];
                   };
+                  readonly name: 'AvatarVideoReference_avatarVideoId_fkey';
                 },
               ];
             };
@@ -714,20 +721,12 @@ type ContractBase = Omit<
                   readonly nullable: false;
                 };
               };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['username'] }];
+              primaryKey: { readonly columns: readonly ['id']; readonly name: 'User_pkey' };
+              uniques: readonly [
+                { readonly columns: readonly ['username']; readonly name: 'User_username_key' },
+              ];
               indexes: readonly [];
               foreignKeys: readonly [];
-            };
-          };
-          readonly valueSet: {
-            readonly AvatarImageType: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['User', 'Model'];
-            };
-            readonly AvatarVideoStatus: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['Pending', 'Done', 'Error'];
             };
           };
         };
@@ -819,15 +818,15 @@ type ContractBase = Omit<
           };
           readonly AvatarImage: {
             readonly fields: {
+              readonly _type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly avatarId: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly type: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -854,9 +853,9 @@ type ContractBase = Omit<
               readonly table: 'AvatarImage';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly _type: { readonly column: 'type' };
                 readonly avatarId: { readonly column: 'avatarId' };
                 readonly id: { readonly column: 'id' };
-                readonly type: { readonly column: 'type' };
                 readonly url: { readonly column: 'url' };
               };
             };
@@ -1039,23 +1038,6 @@ type ContractBase = Omit<
             };
           };
         };
-        readonly enum: {
-          readonly AvatarImageType: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'User'; readonly value: 'User' },
-              { readonly name: 'Model'; readonly value: 'Model' },
-            ];
-          };
-          readonly AvatarVideoStatus: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'Pending'; readonly value: 'Pending' },
-              { readonly name: 'Done'; readonly value: 'Done' },
-              { readonly name: 'Error'; readonly value: 'Error' },
-            ];
-          };
-        };
       };
     };
   };
@@ -1080,53 +1062,6 @@ type ContractBase = Omit<
     };
   };
   readonly extensions: {};
-  readonly execution: {
-    readonly executionHash: ExecutionHash;
-    readonly mutations: {
-      readonly defaults: readonly [
-        {
-          readonly onCreate: { readonly id: 'uuidv4'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly entry: 'Avatar';
-            readonly field: 'id';
-            readonly namespace: 'public';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'uuidv4'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly entry: 'AvatarImage';
-            readonly field: 'id';
-            readonly namespace: 'public';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'uuidv4'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly entry: 'AvatarVideo';
-            readonly field: 'id';
-            readonly namespace: 'public';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'uuidv4'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly entry: 'AvatarVideoReference';
-            readonly field: 'id';
-            readonly namespace: 'public';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'uuidv4'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly entry: 'User';
-            readonly field: 'id';
-            readonly namespace: 'public';
-          };
-        },
-      ];
-    };
-  };
   readonly meta: {};
 
   readonly profileHash: ProfileHash;

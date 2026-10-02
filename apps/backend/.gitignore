@@ -39,3 +39,7 @@ dist/
 .claude
 .cursor
 .devin
+
+# generated avatar images (keep the folder itself)
+assets/*
+!assets/.gitkeep

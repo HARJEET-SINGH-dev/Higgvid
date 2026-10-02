@@ -28,38 +28,6 @@
   "domain": {
     "namespaces": {
       "public": {
-        "enum": {
-          "AvatarImageType": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "User",
-                "value": "User"
-              },
-              {
-                "name": "Model",
-                "value": "Model"
-              }
-            ]
-          },
-          "AvatarVideoStatus": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "Pending",
-                "value": "Pending"
-              },
-              {
-                "name": "Done",
-                "value": "Done"
-              },
-              {
-                "name": "Error",
-                "value": "Error"
-              }
-            ]
-          }
-        },
         "models": {
           "Avatar": {
             "fields": {
@@ -151,6 +119,13 @@
           },
           "AvatarImage": {
             "fields": {
+              "_type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "avatarId": {
                 "nullable": false,
                 "type": {
@@ -159,13 +134,6 @@
                 }
               },
               "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "type": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
@@ -200,14 +168,14 @@
             },
             "storage": {
               "fields": {
+                "_type": {
+                  "column": "type"
+                },
                 "avatarId": {
                   "column": "avatarId"
                 },
                 "id": {
                   "column": "id"
-                },
-                "type": {
-                  "column": "type"
                 },
                 "url": {
                   "column": "url"
@@ -525,6 +493,7 @@
               },
               "foreignKeys": [
                 {
+                  "name": "Avatar_userId_fkey",
                   "source": {
                     "columns": [
                       "userId"
@@ -554,7 +523,8 @@
               "primaryKey": {
                 "columns": [
                   "id"
-                ]
+                ],
+                "name": "Avatar_pkey"
               },
               "uniques": []
             },
@@ -583,6 +553,7 @@
               },
               "foreignKeys": [
                 {
+                  "name": "AvatarImage_avatarId_fkey",
                   "source": {
                     "columns": [
                       "avatarId"
@@ -612,7 +583,8 @@
               "primaryKey": {
                 "columns": [
                   "id"
-                ]
+                ],
+                "name": "AvatarImage_pkey"
               },
               "uniques": []
             },
@@ -666,6 +638,7 @@
               },
               "foreignKeys": [
                 {
+                  "name": "AvatarVideo_userId_fkey",
                   "source": {
                     "columns": [
                       "userId"
@@ -695,7 +668,8 @@
               "primaryKey": {
                 "columns": [
                   "id"
-                ]
+                ],
+                "name": "AvatarVideo_pkey"
               },
               "uniques": []
             },
@@ -719,6 +693,7 @@
               },
               "foreignKeys": [
                 {
+                  "name": "AvatarVideoReference_avatarId_fkey",
                   "source": {
                     "columns": [
                       "avatarId"
@@ -735,6 +710,7 @@
                   }
                 },
                 {
+                  "name": "AvatarVideoReference_avatarVideoId_fkey",
                   "source": {
                     "columns": [
                       "avatarVideoId"
@@ -772,7 +748,8 @@
               "primaryKey": {
                 "columns": [
                   "id"
-                ]
+                ],
+                "name": "AvatarVideoReference_pkey"
               },
               "uniques": []
             },
@@ -799,31 +776,16 @@
               "primaryKey": {
                 "columns": [
                   "id"
-                ]
+                ],
+                "name": "User_pkey"
               },
               "uniques": [
                 {
                   "columns": [
                     "username"
-                  ]
+                  ],
+                  "name": "User_username_key"
                 }
-              ]
-            }
-          },
-          "valueSet": {
-            "AvatarImageType": {
-              "kind": "valueSet",
-              "values": [
-                "User",
-                "Model"
-              ]
-            },
-            "AvatarVideoStatus": {
-              "kind": "valueSet",
-              "values": [
-                "Pending",
-                "Done",
-                "Error"
               ]
             }
           }
@@ -832,69 +794,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "4c9a83ef910fafd8bbc0c5bfb490532ff43b362bafe8135a0d265023f8c67762"
-  },
-  "execution": {
-    "executionHash": "7b11feab6893033b0d390f70b88268da583b0a801067bd2cc63f0961c4d28be8",
-    "mutations": {
-      "defaults": [
-        {
-          "onCreate": {
-            "id": "uuidv4",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "Avatar",
-            "field": "id",
-            "namespace": "public"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "uuidv4",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "AvatarImage",
-            "field": "id",
-            "namespace": "public"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "uuidv4",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "AvatarVideo",
-            "field": "id",
-            "namespace": "public"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "uuidv4",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "AvatarVideoReference",
-            "field": "id",
-            "namespace": "public"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "uuidv4",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "User",
-            "field": "id",
-            "namespace": "public"
-          }
-        }
-      ]
-    }
+    "storageHash": "bbaeb2e7d249b48fa5367a2bf1d4320af47406e4972f748f3050e458cddb8447"
   },
   "capabilities": {
     "postgres": {
